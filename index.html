@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>명화 슬라이딩 퍼즐</title>
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; font-family: sans-serif; background: #f4f4f9; }
+        #puzzle-board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 2px; background: #333; border: 5px solid #333; }
+        .tile { width: 100px; height: 100px; background-size: 300px 300px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; background-color: #ddd; }
+        .empty { background: #333 !important; cursor: default; }
+    </style>
+</head>
+<body>
+
+    <h2>명화 슬라이딩 퍼즐</h2>
+    <div id="puzzle-board"></div>
+    <p>조각을 클릭하여 빈 공간으로 이동시키세요.</p>
+    <button onclick="shuffle()">새로 섞기</button>
+
+    <script>
+        const board = document.getElementById('puzzle-board');
+        let tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8]; // 8은 빈칸
+        
+        function drawBoard() {
+            board.innerHTML = '';
+            tiles.forEach((tile, index) => {
+                const div = document.createElement('div');
+                div.className = 'tile' + (tile === 8 ? ' empty' : '');
+                if (tile !== 8) {
+                    div.style.backgroundImage = "url('https://picsum.photos/300')"; // 무료 이미지 서비스
+                    div.style.backgroundPosition = `-${(tile % 3) * 100}px -${Math.floor(tile / 3) * 100}px`;
+                    div.innerText = tile + 1;
+                }
+                div.onclick = () => moveTile(index);
+                board.appendChild(div);
+            });
+        }
+
+        function moveTile(index) {
+            const emptyIndex = tiles.indexOf(8);
+            const neighbors = [index - 1, index + 1, index - 3, index + 3];
+            if (neighbors.includes(emptyIndex) && (index % 3 !== 0 || emptyIndex !== index - 1) && (index % 3 !== 2 || emptyIndex !== index + 1)) {
+                [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+                drawBoard();
+            }
+        }
+
+        function shuffle() {
+            tiles.sort(() => Math.random() - 0.5);
+            drawBoard();
+        }
+
+        shuffle();
+    </script>
+</body>
+</html>
